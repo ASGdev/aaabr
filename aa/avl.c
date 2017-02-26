@@ -24,6 +24,8 @@ Arbre rotationDroite(Arbre a){
     a->fgauche->fdroite = a;
     a->fgauche = temp;
 
+    return a;
+
 }
 
 Arbre rotationGauche(Arbre a){
@@ -31,6 +33,8 @@ Arbre rotationGauche(Arbre a){
 
     a->fdroite->fgauche = a;
     a->fdroite = temp;
+
+    return a;
 }
 
 
@@ -132,10 +136,7 @@ Arbre ajouter_cle (Arbre a, int cle)
       a = ajouter_noeud (a, n) ;
 
       // équilibrage
-
-
-
-
+      a = equilibrer(a);
 
       return a ;
     }
@@ -418,6 +419,9 @@ Arbre detruire_cle_arbre (Arbre a, int cle)
 
     }
   }
+
+  // équilibrage
+      a = equilibrer(a);
 
   return a;
 }
