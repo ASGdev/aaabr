@@ -19,6 +19,11 @@ typedef noeud *Arbre;
 /* n nouveau n a ajouter dans l'arbre a */
 
 Arbre rotationDroite(Arbre a){
+    Arbre temp = a->fgauche->fdroite;
+
+    a->fgauche->fdroite = a;
+    a->fgauche = temp;
+
 }
 
 Arbre rotationGauche(Arbre a){
