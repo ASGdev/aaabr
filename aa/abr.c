@@ -126,10 +126,6 @@ int hauteur_arbre (Arbre a)
     }
 }
 
-int inc(int i){
-    return i++;
-}
-
 // NOT SAFE
 int ii = 0;
 void insert(int* t, int v){
@@ -414,9 +410,7 @@ void parcourir_arbre_largeur (Arbre a)
 
 Arbre intersection_deux_arbres (Arbre a1, Arbre a2)
 {
-  /*
-    a completer
-  */
+
   Arbre temp;
   int* interlist;
   interlist = malloc(max(nombre_cles_arbre(a1), nombre_cles_arbre(a2)) * sizeof(int));
@@ -433,9 +427,7 @@ Arbre intersection_deux_arbres (Arbre a1, Arbre a2)
 
 Arbre union_deux_arbres (Arbre a1, Arbre a2)
 {
-  /*
-    a completer
-  */
+
   int* a2list;
   a2list = malloc(nombre_cles_arbre(a2) * sizeof(int));
 
@@ -450,9 +442,7 @@ Arbre union_deux_arbres (Arbre a1, Arbre a2)
 
 int inclusion_arbre (Arbre a1, Arbre a2)
 {
-  /*
-    a completer
-  */
+
   int nbclesa1 = nombre_cles_arbre(a1);
     int nbclesa2 = nombre_cles_arbre(a2);
 
