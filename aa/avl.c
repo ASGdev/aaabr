@@ -8,6 +8,7 @@
 
 typedef struct n {
   int cle;
+  int bal;
   struct n *fgauche, *fdroite;
 } noeud ;
 
@@ -78,6 +79,13 @@ Arbre ajouter_cle (Arbre a, int cle)
     {
       n = (Arbre ) malloc (sizeof(noeud)) ;
       n->cle = cle;
+
+      // calcul de l'équilibrage au niveau du noeud
+        hd = hauteur_arbre (a->fdroite);
+        hg = hauteur_arbre(a->fgauche);
+        n->bal = hd-hg;
+
+
       n->fgauche = NULL ;
       n->fdroite = NULL ;
 
