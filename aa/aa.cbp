@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="arbre1" />
+				<Option parameters="arbre2" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -23,6 +23,7 @@
 		<Unit filename="abr.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="abr.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -17,9 +17,33 @@ typedef struct n {
 typedef noeud *Arbre;
 
 /* n nouveau n a ajouter dans l'arbre a */
+int hauteur_arbre (Arbre a)
+{
+  /*
+    calculer la hauteur de l'arbre a
+  */
+
+  if (a == NULL)
+    return 0 ;
+  else
+    {
+      return 1 +
+	     max (hauteur_arbre (a->fgauche), hauteur_arbre (a->fdroite)) ;
+    }
+}
 
 Arbre rotationDroite(Arbre a){
     Arbre temp = a->fgauche->fdroite;
+    int cle = a->cle;
+    Arbre temp2 = a->fdroite;
+    Arbre temp3 = NULL;
+    temp3 = ajouter_cle(temp3, cle);
+    temp3 = ajouter_noeud()
+    printf("--------\n");
+    afficher_arbre(temp2, 0);
+    printf("--------\n");
+
+
 
     a->fgauche->fdroite = a;
     a->fgauche = temp;
@@ -38,29 +62,7 @@ Arbre rotationGauche(Arbre a){
 }
 
 
-int equilibrer(Arbre a){
-    if(a->bal == 2){
-        if(a->fdroite->bal >= 0){
-            return rotationGauche(a);
-        }
-        else {
-            a->fdroite = rotationDroite(a->fdroite);
-            return rotationGauche(a);
-        }
-        if (a->bal == -2){
-            if(a->fgauche->bal <= 0){
-                return rotationDroite(a);
-            } else {
-                a->fgauche = rotationGauche(a->fgauche);
-                return rotationDroite(a);
-            }
-        }
-        else {
-            return a;
-        }
 
-    }
-}
 
 int feuille (Arbre a)
 {
@@ -85,6 +87,12 @@ Arbre ajouter_noeud (Arbre a, Arbre n)
 	a->fgauche = ajouter_noeud (a->fgauche, n) ;
   else
 	a->fdroite = ajouter_noeud (a->fdroite, n) ;
+
+  // calcul de l'équilibrage au niveau du noeud
+  int hd = hauteur_arbre (n->fdroite);
+  int hg = hauteur_arbre(n->fgauche);
+        n->bal = hd-hg;
+
   return a ;
 
 }
@@ -124,19 +132,10 @@ Arbre ajouter_cle (Arbre a, int cle)
       n = (Arbre ) malloc (sizeof(noeud)) ;
       n->cle = cle;
 
-      // calcul de l'équilibrage au niveau du noeud
-        int hd = hauteur_arbre (a->fdroite);
-        int hg = hauteur_arbre(a->fgauche);
-        n->bal = hd-hg;
-
-
       n->fgauche = NULL ;
       n->fdroite = NULL ;
 
       a = ajouter_noeud (a, n) ;
-
-      // équilibrage
-      a = equilibrer(a);
 
       return a ;
     }
@@ -167,20 +166,7 @@ void afficher_arbre (Arbre a, int niveau)
   return ;
 }
 
-int hauteur_arbre (Arbre a)
-{
-  /*
-    calculer la hauteur de l'arbre a
-  */
 
-  if (a == NULL)
-    return 0 ;
-  else
-    {
-      return 1 +
-	     max (hauteur_arbre (a->fgauche), hauteur_arbre (a->fdroite)) ;
-    }
-}
 
 // NOT SAFE
 int ii = 0;
@@ -365,6 +351,31 @@ Arbre lire_arbre (char *nom_fichier)
   return a ;
 }
 
+Arbre equilibrer(Arbre a){
+    if(a->bal == 2){
+        if(a->fdroite->bal >= 0){
+            return rotationGauche(a);
+        }
+        else {
+            a->fdroite = rotationDroite(a->fdroite);
+            return rotationGauche(a);
+        }
+        if (a->bal == -2){
+            if(a->fgauche->bal <= 0){
+                return rotationDroite(a);
+            } else {
+                a->fgauche = rotationGauche(a->fgauche);
+                return rotationDroite(a);
+            }
+        }
+        else {
+            return a;
+        }
+
+    }
+    return NULL;
+}
+
 Arbre detruire_cle_arbre (Arbre a, int cle)
 {
   /*
@@ -421,7 +432,7 @@ Arbre detruire_cle_arbre (Arbre a, int cle)
   }
 
   // équilibrage
-      a = equilibrer(a);
+      //a = equilibrer(a);
 
   return a;
 }
@@ -527,12 +538,11 @@ int* a1list;
 
 int main (int argc, char**argv)
 {
-  Arbre a ;
   int x ;
   int bool ;
 
 
-  Arbre  ptrouve = NULL ;
+  Arbre ptrouve = NULL ;
 
   if (argc != 2)
     {
@@ -540,71 +550,15 @@ int main (int argc, char**argv)
       exit (-1) ;
     }
 
-  a = lire_arbre (argv[1]) ;
+  Arbre a = lire_arbre (argv[1]) ;
 
   afficher_arbre (a,0) ;
 
-//  printf ("Hauteur %d\n", hauteur_arbre (a)) ;
-//
-//  nombre_noeuds_par_niveau (a) ;
-//
-//  printf ("Nombre cles de l'arbre %d\n", nombre_cles_arbre (a)) ;
-//
-//
-//
-//  bool = EquilibreComplet1 (a) ;
-//
-//  if (bool == 1)
-//    printf ("Methode 1: Arbre equilibre complet\n") ;
-//  else
-//    printf ("Methode 1: Arbre n'est pas equilibre complet\n") ;
-//
-//    bool = EquilibreComplet2 (a) ;
-//
-//  if (bool == 1)
-//    printf ("Methode 2: Arbre equilibre complet\n") ;
-//  else
-//    printf ("Methode 2: Arbre n'est pas equilibre complet\n") ;
+  a = rotationDroite(a);
+  printf("\n\n");
 
-    printf("Parcours de l'arbre : \n");
+  afficher_arbre (a,0) ;
 
-    int *list;
-    list = malloc(nombre_cles_arbre (a) * sizeof(int));
-    parcourir_arbre_toList(a, list, 0);
-    printf("Fin parcours de l'arbre\n");
-    for(int i=0; i<nombre_cles_arbre (a); i++){
-        printf("%d - ", list[i]);
-    }
 
-    //printf("Impression liste triée de l'arbre : \n");
-    //imprimer_liste_cle_triee(a);
 
-  /*
-    Appels des fonctions de recherche de cles
-  */
-
-//  printf ("Entrez une cle a rechercher\n") ;
-//
-//  scanf ("%d", &x) ;
-//
-//  ptrouve = rechercher_cle_arbre (a, x) ;
-//
-//  if (ptrouve != NULL)
-//    printf ("la cle %d est dans l'arbre\n", x) ;
-//  else
-//    printf ("la cle %d n'est pas dans l'arbre\n", x) ;
-//
-//  ptrouve = rechercher_cle_sup_arbre (a, x) ;
-//
-//  if (ptrouve != NULL)
-//    printf ("la cle sup de %d est %d\n", x, ptrouve->cle) ;
-//  else
-//    printf ("il n'y a pas de cle sup pour %d\n", x) ;
-//
-//  ptrouve = rechercher_cle_inf_arbre (a, x) ;
-//
-//  if (ptrouve != NULL)
-//    printf ("la cle inf de %d est %d\n", x, ptrouve->cle) ;
-//  else
-//    printf ("il n'y a pas de cle inf pour %d\n", x) ;
 }

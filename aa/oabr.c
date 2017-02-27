@@ -128,8 +128,8 @@ int hauteur_arbre (Arbre a)
 
 // NOT SAFE
 int ii = 0;
-void insert(int* t, int v){
-    if(ii == 10){
+void insert(int* t, int tsize, int v){
+    if(ii == tsize){
         ii=0;
     }
     printf("Insert at index %d \n", ii);
@@ -143,7 +143,6 @@ void parcourir_arbre (Arbre a, int *t, int niveau)
     return ;
 
    t [niveau] = t [niveau] + 1 ;
- printf("- %d - ", a->cle);
 
   parcourir_arbre (a->fgauche, t, niveau+1) ;
   parcourir_arbre (a->fdroite, t, niveau+1) ;
@@ -158,7 +157,7 @@ void parcourir_arbre_toList(Arbre a, int *t, int niveau)
 
   printf("- %d - ", a->cle);
 
-  insert(t, a->cle);
+  insert(t, 20, a->cle);
 
   parcourir_arbre_toList(a->fgauche, t, niveau+1) ;
   parcourir_arbre_toList(a->fdroite, t, niveau+1) ;
@@ -309,62 +308,86 @@ Arbre lire_arbre (char *nom_fichier)
   return a ;
 }
 
+
+Arbre detruire_cle_arbre_2(Arbre a, int cle){
+
+    int *t;
+    t = malloc(nombre_cles_arbre(a) * sizeof(int));
+
+    parcourir_arbre_toList(a, t, 0);
+
+
+    Arbre b = NULL;
+
+    for(int i = 0; i<nombre_cles_arbre(a); i++){
+        if(t[i] != cle){
+            b = ajouter_cle(b, t[i]);
+            printf("Insertion clé %d\n", t[i]);
+        }
+    }
+
+
+
+    return b;
+
+}
+
+
+
 Arbre detruire_cle_arbre (Arbre a, int cle)
 {
   /*
     Destruction d'une clé
   */
-
+  Arbre b = a;
   // recherche si la clé est présente, dans le cas échéant l'arbre inchangé est retourné.
-  Arbre temp = rechercher_cle_arbre (a, cle);
-  Arbre parent = rechercher_cle_sup_arbre(a, temp->cle);
-  if (temp == NULL){
+  Arbre aSuppr = rechercher_cle_arbre (a, cle);
+  Arbre c = NULL;
+  if (aSuppr == NULL){
     return a;
   } else {
     // si feuille
-    if(feuille(temp)){
+    if(feuille(aSuppr)){
+        Arbre sauvdr;
+        Arbre currentNode;
+        int cleParent;
 
-        if(parent->fdroite->cle == cle){
-            parent->fdroite = NULL;
+        if(aSuppr->cle == a->cle){
+            return NULL;
+        }
+        if(aSuppr->cle < a->cle){
+            sauvdr = a->fdroite;
+            currentNode = a->fgauche;
+            //cleParent =  rechercher_cle_sup_arbre(a->fgauche, aSuppr->cle)->cle;
+
         } else {
-            parent->fgauche = NULL;
+            sauvdr = a->fgauche;
+            currentNode = a->fdroite;
+            //cleParent = rechercher_cle_sup_arbre(a->fdroite, aSuppr->cle)->cle;
         }
 
-    } else {
-        // si noeud avec qu'un seul fils
-        if (temp->fdroite == NULL || temp->fgauche != NULL){
-            // noeud avec fils gauche
+            ajouter_cle(sauvdr, a->cle);
 
-            if(parent->fdroite->cle == cle){
-                parent->fdroite = temp->fgauche;
-            } else {
-                parent->fgauche = temp->fgauche;
+            printf("// %d , %d, %d //\n", currentNode->cle, aSuppr->cle);
+            while(currentNode->cle > aSuppr->cle){
+                printf("Rentre");
+                ajouter_noeud(sauvdr, currentNode);
+
+                currentNode = currentNode->fgauche;
             }
-
-        } else if (temp->fgauche == NULL || temp->fdroite != NULL) {
-            // noeud avec fils droit
-
-              if(parent->fdroite->cle == cle){
-                parent->fdroite = temp->fdroite;
+        cleParent = currentNode->cle;
+        printf("CurrentNode key is : %d\n", currentNode->cle);
+        if(aSuppr->cle < cleParent){
+                ajouter_noeud(sauvdr, currentNode->fdroite);
             } else {
-                parent->fgauche = temp->fdroite;
+                ajouter_noeud(sauvdr, currentNode->fgauche);
             }
-        }
+            ajouter_cle(sauvdr, cleParent);
+            return sauvdr;
 
-        else {
-            // cas où la clé à supprimer a deux fils : on recherche un autre noeud pour le remplacer (le min du fils droit), puis on supprime l'ancien noeud
-            Arbre mindroit = rechercher_cle_inf_arbre(temp->fdroite, temp->cle);
-            mindroit->fgauche = mindroit->fdroite;
-            mindroit->fdroite = temp->fdroite;
-            a = detruire_cle_arbre(a, mindroit->cle);
-            a = ajouter_noeud(a, mindroit);
         }
-
 
     }
-  }
-
-  return a;
 }
 
 int trouver_cle_min (Arbre a)
@@ -372,13 +395,12 @@ int trouver_cle_min (Arbre a)
   /*
     Retourne la clé minimale (celle qui est toute à gauche)
   */
-  Arbre feuilleGauche;
 
-  while(feuilleGauche->fgauche != NULL){
-    feuilleGauche = feuilleGauche->fgauche;
+  if (a->fgauche == NULL){
+    return a->cle;
+  } else {
+    trouver_cle_min(a->fgauche);
   }
-
-  return feuilleGauche->cle;
 
 }
 
@@ -387,14 +409,14 @@ void imprimer_liste_cle_triee (Arbre a)
   /*
     parcours en ordre infixe
   */
-if (a == NULL)
+    if (a == NULL)
+        return ;
+
+    imprimer_liste_cle_triee (a->fgauche) ;
+    printf("- %d - ", a->cle);
+    imprimer_liste_cle_triee (a->fdroite) ;
+
     return ;
-
-  imprimer_liste_cle_triee (a->fgauche) ;
-  printf("- %d - ", a->cle);
-  imprimer_liste_cle_triee (a->fdroite) ;
-
-  return ;
 }
 
 void parcourir_arbre_largeur (Arbre a)
@@ -411,15 +433,16 @@ void parcourir_arbre_largeur (Arbre a)
 Arbre intersection_deux_arbres (Arbre a1, Arbre a2)
 {
 
-  Arbre temp;
+  Arbre temp = NULL;
   int* interlist;
   interlist = malloc(max(nombre_cles_arbre(a1), nombre_cles_arbre(a2)) * sizeof(int));
 
-  int min = min(nombre_cles_arbre(a1), nombre_cles_arbre(a2));
+  parcourir_arbre_toList(a1, interlist, 0);
 
-  for(int i=0; i<min; i++){
-    if(rechercher_cle_arbre (a2, a1[i].cle) != NULL){
-        ajouter_cle(temp, a1[i].cle);
+  for(int i=0; i<nombre_cles_arbre(a1); i++){
+    printf("test clé %d\n", interlist[i]);
+    if(rechercher_cle_arbre (a2, interlist[i]) != NULL){
+        temp = ajouter_cle(temp, interlist[i]);
     }
   }
     return temp;
@@ -431,6 +454,7 @@ Arbre union_deux_arbres (Arbre a1, Arbre a2)
   int* a2list;
   a2list = malloc(nombre_cles_arbre(a2) * sizeof(int));
 
+  ii=0;
   parcourir_arbre_toList(a2, a2list, 0);
 
   for(int i=0; i<nombre_cles_arbre(a2); i++){
@@ -449,11 +473,12 @@ int inclusion_arbre (Arbre a1, Arbre a2)
     if(nbclesa2 < nbclesa1)
         return 0;
 
-int* a1list;
+    int* a1list;
   a1list = malloc(nbclesa1 * sizeof(int));
 
-  int* a2list;
-  a1list = malloc(nbclesa2 * sizeof(int));
+  ii=0;
+ parcourir_arbre_toList(a1, a1list, 0);
+
 
   for(int i = 0; i< nbclesa1; i++){
     Arbre temp = rechercher_cle_arbre (a2, a1list[i]);
@@ -485,6 +510,17 @@ int main (int argc, char**argv)
 
   afficher_arbre (a,0) ;
 
+  //printf("Trouve clé min : %d", trouver_cle_min(a));
+
+  imprimer_liste_cle_triee(a);
+  printf("\n");
+  Arbre b = NULL;
+  ii=0;
+  b = ajouter_cle(b, 46);
+  imprimer_liste_cle_triee(b);
+  printf("\n");
+  printf("Inclus : %d", inclusion_arbre(b, a));
+
 //  printf ("Hauteur %d\n", hauteur_arbre (a)) ;
 //
 //  nombre_noeuds_par_niveau (a) ;
@@ -506,19 +542,21 @@ int main (int argc, char**argv)
 //    printf ("Methode 2: Arbre equilibre complet\n") ;
 //  else
 //    printf ("Methode 2: Arbre n'est pas equilibre complet\n") ;
-
-    printf("Parcours de l'arbre : \n");
-
-    int *list;
-    list = malloc(nombre_cles_arbre (a) * sizeof(int));
-    parcourir_arbre_toList(a, list, 0);
-    printf("Fin parcours de l'arbre\n");
-    for(int i=0; i<nombre_cles_arbre (a); i++){
-        printf("%d - ", list[i]);
-    }
-
+//
+//    printf("Parcours de l'arbre : \n");
+//
+//    int *list;
+//    list = malloc(nombre_cles_arbre (a) * sizeof(int));
+//    parcourir_arbre_toList(a, list, 0);
+//    printf("Fin parcours de l'arbre\n");
+//    for(int i=0; i<nombre_cles_arbre (a); i++){
+//        printf("%d - ", list[i]);
+//    }
+//
     //printf("Impression liste triée de l'arbre : \n");
     //imprimer_liste_cle_triee(a);
+
+
 
   /*
     Appels des fonctions de recherche de cles
@@ -548,4 +586,8 @@ int main (int argc, char**argv)
 //    printf ("la cle inf de %d est %d\n", x, ptrouve->cle) ;
 //  else
 //    printf ("il n'y a pas de cle inf pour %d\n", x) ;
+
+
+
+
 }

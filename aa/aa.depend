@@ -1,5 +1,9 @@
 # depslib dependency file v1.0
-1488133757 source:c:\users\aurélien\desktop\aa\aaabr\aa\abr.c
+1488232718 source:c:\users\aurélien\desktop\aa\aaabr\aa\abr.c
+	<stdio.h>
+	<stdlib.h>
+
+1488233963 source:c:\users\aurélien\desktop\aa\aaabr\aa\avl.c
 	<stdio.h>
 	<stdlib.h>
 
